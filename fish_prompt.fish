@@ -5,19 +5,15 @@ function fish_prompt --description 'Write out the prompt'
 
     if test -n "$fish_detailed_prompt"
 
-        # collect data for fish prompt
-
-        if not test -n "$prompt_counter"
-            set -U $prompt_counter 0
+        if not test -n "$last_prompt_check"
+            set -U last_prompt_check (date +%s)
         end
 
-        if test -n "$reset_fish_detailed_prompt"
-            set $prompt_counter 100
-            set -e $reset_fish_detailed_prompt
-        end
+        # reload environment in every 10 minutes or in case of `chenv`
 
-        if test "$prompt_counter" -gt 14
-            set -U prompt_counter 0
+        if test (date +%s) -gt (math $last_prompt_check + 600) || test $reset_fish_detailed_prompt -eq 1
+            # set -U prompt_counter 0
+            set -U last_prompt_check (date +%s)
             set_color -b magenta -i
             echo -n " Reload NVM_CURRENT_VERSION, GOOGLE_CONFIG_NAME, GOOGLE_PROJECT, K8S_CLUSTER, K8S_CLUSTER_VERSION "
             set_color normal
@@ -25,6 +21,9 @@ function fish_prompt --description 'Write out the prompt'
             set -xU GOOGLE_PROJECT (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.core.project)')
             set -xU GOOGLE_CONFIG_NAME (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
             set -xU K8S_CLUSTER (kubectl config current-context 2>&1)
+            if test $reset_fish_detailed_prompt -eq 0
+                chenv reset
+            end
             if test $K8S_CLUSTER != "error: current-context is not set"
                 set -xU K8S_CLUSTER_VERSION (kubectl version --short | awk '/Server/{print$3}')
             else
@@ -39,8 +38,7 @@ function fish_prompt --description 'Write out the prompt'
             else
                 set -xU NVM_CURRENT_VERSION 'undefined / undefined'
             end
-        else
-            set -U prompt_counter (math "$prompt_counter+1")
+            set -U reset_fish_detailed_prompt 0
         end
 
         # check Google Config Name
