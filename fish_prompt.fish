@@ -52,7 +52,7 @@ function fish_prompt --description 'Write out the prompt'
         end
 
         if not test -n "$GOOGLE_ZONE"
-            set -xU GOOGLE_ZONE (gcloud config configurations list --filter 'is_active=true' --formet 'value(properties.compute.zone)')
+            set -xU GOOGLE_ZONE (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.compute.zone)')
         end
 
         if not test -n "$K8S_CLUSTER"
