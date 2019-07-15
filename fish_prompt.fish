@@ -51,6 +51,10 @@ function fish_prompt --description 'Write out the prompt'
             set -xU GOOGLE_PROJECT (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.core.project)')
         end
 
+        if not test -n "$GOOGLE_REGION"
+            set -xU GOOGLE_REGION (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.compute.region)')
+        end
+        
         if not test -n "$GOOGLE_ZONE"
             set -xU GOOGLE_ZONE (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.compute.zone)')
         end
