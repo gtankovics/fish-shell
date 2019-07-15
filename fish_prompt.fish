@@ -80,7 +80,7 @@ function fish_prompt --description 'Write out the prompt'
         set_color brblue
         echo -n '⎔ '
         set_color yellow
-        echo 'conf:' $GOOGLE_CONFIG_NAME 'project:' $GOOGLE_PROJECT 'zone:' $GOOGLE_ZONE
+        echo 'conf:' $GOOGLE_CONFIG_NAME 'project:' $GOOGLE_PROJECT 'region:' $GOOGLE_REGION 'zone:' $GOOGLE_ZONE
         if test -n "$GOOGLE_APPLICATION_CREDENTIALS"
             echo '  GOOGLE_APPLICATION_CREDENTIALS='$GOOGLE_APPLICATION_CREDENTIALS
         end
