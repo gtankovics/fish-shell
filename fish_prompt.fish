@@ -9,9 +9,11 @@ function fish_prompt --description 'Write out the prompt'
             set -U last_prompt_check (date +%s)
         end
 
-        # reload environment in every 10 minutes or in case of `chenv`
+        # reload environment in every X minutes (fish_prompt_reload_interval, default=600 sec=10 min) or in case of `chenv`
+        
+        set -q fish_prompt_reload_interval; or set -xU fish_prompt_reload_interval 600
 
-        if test (date +%s) -gt (math $last_prompt_check + 600) || test $reset_fish_detailed_prompt -eq 1
+        if test (date +%s) -gt (math "$last_prompt_check + $fish_prompt_reload_interval") || test $reset_fish_detailed_prompt -eq 1
             # set -U prompt_counter 0
             set -U last_prompt_check (date +%s)
             set_color -b magenta -i
