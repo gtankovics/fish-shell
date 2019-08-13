@@ -1,21 +1,21 @@
 function fish_prompt --description 'Write out the prompt'
     set -l last_status $status
 
-    # detauled prompt
+    # detailed prompt
 
-    if test -n "$fish_detailed_prompt"
+    if test -n "$fish_prompt_detailed"
 
-        if not test -n "$last_prompt_check"
-            set -U last_prompt_check (date +%s)
+        if not test -n "$fish_prompt_detailed_last_check"
+            set -U fish_prompt_detailed_last_check (date +%s)
         end
 
-        # reload environment in every X minutes (fish_prompt_reload_interval, default=600 sec=10 min) or in case of `chenv`
+        # reload environment in every X minutes (fish_prompt_detailed_reload_interval, default=600 sec=10 min) or in case of `chenv`
         
-        set -q fish_prompt_reload_interval; or set -xU fish_prompt_reload_interval 600
+        set -q fish_prompt_detailed_reload_interval; or set -xU fish_prompt_detailed_reload_interval 600
 
-        if test (date +%s) -gt (math "$last_prompt_check + $fish_prompt_reload_interval") || test $reset_fish_detailed_prompt -eq 1
+        if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval") || test $fish_detailed_prompt_reset -eq 1
             # set -U prompt_counter 0
-            set -U last_prompt_check (date +%s)
+            set -U fish_prompt_detailed_last_check (date +%s)
             set_color -b magenta -i
             echo -n " Reload NVM_CURRENT_VERSION, GOOGLE_CONFIG_NAME, GOOGLE_PROJECT, K8S_CLUSTER, K8S_CLUSTER_VERSION "
             set_color normal
@@ -23,7 +23,7 @@ function fish_prompt --description 'Write out the prompt'
             set -xU GOOGLE_PROJECT (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.core.project)')
             set -xU GOOGLE_CONFIG_NAME (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
             set -xU K8S_CLUSTER (kubectl config current-context 2>&1)
-            if test $reset_fish_detailed_prompt -eq 0
+            if test $fish_detailed_prompt_reset -eq 0
                 chenv reset
             end
             if test $K8S_CLUSTER != "error: current-context is not set"
@@ -40,7 +40,7 @@ function fish_prompt --description 'Write out the prompt'
             else
                 set -xU NVM_CURRENT_VERSION 'undefined / undefined'
             end
-            set -U reset_fish_detailed_prompt 0
+            set -U fish_detailed_prompt_reset 0
         end
 
         # check Google Config Name
