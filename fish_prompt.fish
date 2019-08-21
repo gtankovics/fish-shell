@@ -1,23 +1,21 @@
 function fish_prompt --description 'Write out the prompt'
     set -l last_status $status
 
-    # detauled prompt
+    # detailed prompt
 
-    if test -n "$fish_detailed_prompt"
+    if test -n "$fish_prompt_detailed"
 
-        # collect data for fish prompt
-
-        if not test -n "$prompt_counter"
-            set -U $prompt_counter 0
+        if not test -n "$fish_prompt_detailed_last_check"
+            set -U fish_prompt_detailed_last_check (date +%s)
         end
 
-        if test -n "$reset_fish_detailed_prompt"
-            set $prompt_counter 100
-            set -e $reset_fish_detailed_prompt
-        end
+        # reload environment in every X minutes (fish_prompt_detailed_reload_interval, default=600 sec=10 min) or in case of `chenv`
+        
+        set -q fish_prompt_detailed_reload_interval; or set -xU fish_prompt_detailed_reload_interval 600
 
-        if test "$prompt_counter" -gt 14
-            set -U prompt_counter 0
+        if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval") || test $fish_detailed_prompt_reset -eq 1
+            # set -U prompt_counter 0
+            set -U fish_prompt_detailed_last_check (date +%s)
             set_color -b magenta -i
             echo -n " Reload NVM_CURRENT_VERSION, GOOGLE_CONFIG_NAME, GOOGLE_PROJECT, K8S_CLUSTER, K8S_CLUSTER_VERSION "
             set_color normal
@@ -25,6 +23,9 @@ function fish_prompt --description 'Write out the prompt'
             set -xU GOOGLE_PROJECT (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.core.project)')
             set -xU GOOGLE_CONFIG_NAME (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
             set -xU K8S_CLUSTER (kubectl config current-context 2>&1)
+            if test $fish_detailed_prompt_reset -eq 0
+                chenv reset
+            end
             if test $K8S_CLUSTER != "error: current-context is not set"
                 set -xU K8S_CLUSTER_VERSION (kubectl version --short | awk '/Server/{print$3}')
             else
@@ -39,8 +40,7 @@ function fish_prompt --description 'Write out the prompt'
             else
                 set -xU NVM_CURRENT_VERSION 'undefined / undefined'
             end
-        else
-            set -U prompt_counter (math "$prompt_counter+1")
+            set -U fish_detailed_prompt_reset 0
         end
 
         # check Google Config Name
@@ -53,6 +53,10 @@ function fish_prompt --description 'Write out the prompt'
             set -xU GOOGLE_PROJECT (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.core.project)')
         end
 
+        if not test -n "$GOOGLE_REGION"
+            set -xU GOOGLE_REGION (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.compute.region)')
+        end
+        
         if not test -n "$GOOGLE_ZONE"
             set -xU GOOGLE_ZONE (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.compute.zone)')
         end
@@ -78,7 +82,7 @@ function fish_prompt --description 'Write out the prompt'
         set_color brblue
         echo -n '⎔ '
         set_color yellow
-        echo 'conf:' $GOOGLE_CONFIG_NAME 'project:' $GOOGLE_PROJECT 'zone:' $GOOGLE_ZONE
+        echo 'conf:' $GOOGLE_CONFIG_NAME 'project:' $GOOGLE_PROJECT 'region:' $GOOGLE_REGION 'zone:' $GOOGLE_ZONE
         if test -n "$GOOGLE_APPLICATION_CREDENTIALS"
             echo '  GOOGLE_APPLICATION_CREDENTIALS='$GOOGLE_APPLICATION_CREDENTIALS
         end
