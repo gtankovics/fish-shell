@@ -13,7 +13,7 @@ function fish_prompt --description 'Write out the prompt'
         
         set -q fish_prompt_detailed_reload_interval; or set -xU fish_prompt_detailed_reload_interval 600
 
-        if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval") || test $fish_detailed_prompt_reset -eq 1
+        if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval"); OR test $fish_detailed_prompt_reset -eq 1
             # set -U prompt_counter 0
             set -U fish_prompt_detailed_last_check (date +%s)
             set_color -b magenta -i
