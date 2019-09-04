@@ -3,7 +3,7 @@ function fish_prompt --description 'Write out the prompt'
 
     # detailed prompt
 
-    if test -n "$fish_prompt_detailed"
+    if test -n "$fish_prompt_detailed" && test "$TERM_PROGRAM" != "vscode"
 
         if not test -n "$fish_prompt_detailed_last_check"
             set -U fish_prompt_detailed_last_check (date +%s)
@@ -11,7 +11,7 @@ function fish_prompt --description 'Write out the prompt'
 
         # reload environment in every X minutes (fish_prompt_detailed_reload_interval, default=600 sec=10 min) or in case of `chenv`
         
-        set -q fish_prompt_detailed_reload_interval; or set -xU fish_prompt_detailed_reload_interval 600
+        set -q fish_prompt_detailed_reload_interval || set -xU fish_prompt_detailed_reload_interval 600
 
         if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval"); OR test $fish_detailed_prompt_reset -eq 1
             # set -U prompt_counter 0
