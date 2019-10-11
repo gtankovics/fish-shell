@@ -80,7 +80,7 @@ function fish_prompt --description 'Write out the prompt'
         end
 
         # set Google Cloud environment
-        if test "$TERM_PROGRAM" = "iTerm2.app"
+        if test "$TERM_PROGRAM" = "iTerm.app"
             iterm2_prompt_mark
         end
 
@@ -101,6 +101,11 @@ function fish_prompt --description 'Write out the prompt'
         end
         set_color normal
         echo
+    end
+
+    # place iTerm prompt marker
+    if test "$TERM_PROGRAM" = "iTerm.app"
+        iterm2_prompt_mark
     end
 
     # User
