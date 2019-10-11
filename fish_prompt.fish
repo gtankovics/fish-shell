@@ -79,6 +79,11 @@ function fish_prompt --description 'Write out the prompt'
             echo 'nvm:' $NVM_CURRENT_VERSION
         end
 
+        # set Google Cloud environment
+        if test "$TERM_PROGRAM" = "iTerm.app"
+            iterm2_prompt_mark
+        end
+
         set_color brblue
         echo -n '⎔ '
         set_color yellow
@@ -96,6 +101,11 @@ function fish_prompt --description 'Write out the prompt'
         end
         set_color normal
         echo
+    end
+
+    # place iTerm prompt marker
+    if test "$TERM_PROGRAM" = "iTerm.app"
+        iterm2_prompt_mark
     end
 
     # User
