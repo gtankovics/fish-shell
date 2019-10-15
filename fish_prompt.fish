@@ -13,8 +13,8 @@ function fish_prompt --description 'Write out the prompt'
         
         set -q fish_prompt_detailed_reload_interval || set -xU fish_prompt_detailed_reload_interval 600
 
-        if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval") || test $fish_detailed_prompt_reset -eq 1
-            # set -U prompt_counter 0
+        # update prompt values
+        if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval") || test $fish_prompt_detailed_reset -eq 1
             set -U fish_prompt_detailed_last_check (date +%s)
             set_color -b magenta -i
             echo -n " Reload NVM_CURRENT_VERSION, GOOGLE_CONFIG_NAME, GOOGLE_PROJECT, K8S_CLUSTER, K8S_CLUSTER_VERSION "
@@ -40,36 +40,12 @@ function fish_prompt --description 'Write out the prompt'
             else
                 set -xU NVM_CURRENT_VERSION 'undefined / undefined'
             end
-            # set -U fish_detailed_prompt_reset 0
+            if test "$TERM_PROGRAM" = "iTerm.app"
+                # update iTerm user variables
+                iterm2_update_user_vars
+            end
+            set -U $fish_prompt_detailed_reset 0
         end
-
-        # check Google Config Name
-        if not test -n "$GOOGLE_CONFIG_NAME"
-            set -xU GOOGLE_CONFIG_NAME (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
-        end
-
-        # check GOOGLE PROJECT
-        if not test -n "$GOOGLE_PROJECT"
-            set -xU GOOGLE_PROJECT (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.core.project)')
-        end
-
-        if not test -n "$GOOGLE_REGION"
-            set -xU GOOGLE_REGION (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.compute.region)')
-        end
-        
-        if not test -n "$GOOGLE_ZONE"
-            set -xU GOOGLE_ZONE (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.compute.zone)')
-        end
-
-        if not test -n "$K8S_CLUSTER"
-            set -xU K8S_CLUSTER (kubectl config current-context)
-        end
-
-        # set -l IFS "_"; echo -n "$K8S_CLUSTER" | read -la ARRAY
-        # if not contains $ARRAY[2] $GOOGLE_PROJECT; and [ $K8S_CLUSTER != "n/a" ]; 
-        #         set_color red
-        #         echo 'Google Project does NOT match kubernetes cluster !!!'
-        # end
 
         # node/npm version
         if test -n "$NVM_CURRENT_VERSION"
