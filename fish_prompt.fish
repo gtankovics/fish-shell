@@ -23,9 +23,9 @@ function fish_prompt --description 'Write out the prompt'
             set -xU GOOGLE_PROJECT (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.core.project)')
             set -xU GOOGLE_CONFIG_NAME (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
             set -xU K8S_CLUSTER (kubectl config current-context 2>&1)
-            if test $fish_detailed_prompt_reset -eq 0
-                chenv reset
-            end
+            # if test $fish_detailed_prompt_reset -eq 0
+            #     chenv reset
+            # end
             if test $K8S_CLUSTER != "error: current-context is not set"
                 set -xU K8S_CLUSTER_VERSION (kubectl version --short | awk '/Server/{print$3}')
             else
@@ -40,7 +40,7 @@ function fish_prompt --description 'Write out the prompt'
             else
                 set -xU NVM_CURRENT_VERSION 'undefined / undefined'
             end
-            set -U fish_detailed_prompt_reset 0
+            # set -U fish_detailed_prompt_reset 0
         end
 
         # check Google Config Name
@@ -79,11 +79,11 @@ function fish_prompt --description 'Write out the prompt'
             echo 'nvm:' $NVM_CURRENT_VERSION
         end
 
-        # set Google Cloud environment
         if test "$TERM_PROGRAM" = "iTerm.app"
             iterm2_prompt_mark
         end
 
+        # set Google Cloud environment
         set_color brblue
         echo -n '⎔ '
         set_color yellow
