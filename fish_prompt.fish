@@ -17,11 +17,11 @@ function fish_prompt --description 'Write out the prompt'
         if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval") || test $fish_prompt_detailed_reset -eq 1
             set -U fish_prompt_detailed_last_check (date +%s)
             set_color -b magenta -i
-            echo -n " Reload NVM_CURRENT_VERSION, GOOGLE_CONFIG_NAME, GOOGLE_PROJECT, K8S_CLUSTER, K8S_CLUSTER_VERSION "
+            echo -n " Reload NVM_CURRENT_VERSION, GOOGLE_CONFIG, GOOGLE_PROJECT, K8S_CLUSTER, K8S_CLUSTER_VERSION "
             set_color normal
             echo
+            set -xU GOOGLE_CONFIG (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
             set -xU GOOGLE_PROJECT (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.core.project)')
-            set -xU GOOGLE_CONFIG_NAME (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
             set -xU K8S_CLUSTER (kubectl config current-context 2>&1)
             # if test $fish_detailed_prompt_reset -eq 0
             #     chenv reset
@@ -30,6 +30,7 @@ function fish_prompt --description 'Write out the prompt'
                 set -xU K8S_CLUSTER_VERSION (kubectl version --short | awk '/Server/{print$3}')
             else
                 set -xU K8S_CLUSTER_VERSION "n/a"
+                set -xU K8S_CLUSTER_SHORT ''
             end
             if test (node -v)
                 if test (npm -v)
@@ -40,11 +41,8 @@ function fish_prompt --description 'Write out the prompt'
             else
                 set -xU NVM_CURRENT_VERSION 'undefined / undefined'
             end
-            if test "$TERM_PROGRAM" = "iTerm.app"
-                # update iTerm user variables
-                iterm2_update_user_vars
-            end
             set -U $fish_prompt_detailed_reset 0
+            iterm2_update_user_vars
         end
 
         # node/npm version
@@ -63,7 +61,7 @@ function fish_prompt --description 'Write out the prompt'
         set_color brblue
         echo -n '⎔ '
         set_color yellow
-        echo 'conf:' $GOOGLE_CONFIG_NAME 'project:' $GOOGLE_PROJECT 'region:' $GOOGLE_REGION 'zone:' $GOOGLE_ZONE
+        echo 'conf:' $GOOGLE_CONFIG 'project:' $GOOGLE_PROJECT 'region:' $GOOGLE_REGION 'zone:' $GOOGLE_ZONE
         if test -n "$GOOGLE_APPLICATION_CREDENTIALS"
             echo '  GOOGLE_APPLICATION_CREDENTIALS='$GOOGLE_APPLICATION_CREDENTIALS
         end
@@ -80,8 +78,10 @@ function fish_prompt --description 'Write out the prompt'
     end
 
     # place iTerm prompt marker
-    if test "$TERM_PROGRAM" = "iTerm.app"
+    if test $TERM_PROGRAM = "iTerm.app"
         iterm2_prompt_mark
+        # update iTerm user variables
+        iterm2_update_user_vars
     end
 
     # User
