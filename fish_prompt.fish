@@ -41,7 +41,7 @@ function fish_prompt --description 'Write out the prompt'
             else
                 set -xU NVM_CURRENT_VERSION 'undefined / undefined'
             end
-            set -U $fish_prompt_detailed_reset 0
+            set -U fish_prompt_detailed_reset 0
             iterm2_update_user_vars
         end
 
