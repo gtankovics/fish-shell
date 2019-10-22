@@ -17,7 +17,7 @@ function gcp --description "Open GKE page on GCP web interface"
 						open https://console.cloud.google.com/kubernetes/ingresses\?project=$GOOGLE_PROJECT
 					case c config configurations
 						open https://console.cloud.google.com/kubernetes/config\?project=$GOOGLE_PROJECT
-					case s storage
+					case p storage
 						open https://console.cloud.google.com/kubernetes/storage\?project=$GOOGLE_PROJECT
 					case a application
 						open https://console.cloud.google.com/kubernetes/application\?project=$GOOGLE_PROJECT
