@@ -22,7 +22,7 @@ function gcp --description "Open GKE page on GCP web interface"
 					case a application
 						open https://console.cloud.google.com/kubernetes/application\?project=$GOOGLE_PROJECT
 					case \*
-						printf "ERROR: unknown option. [%s]" $value
+						printf "ERROR: unknown option. [%s]" $key
 				end
 		end
 		else
