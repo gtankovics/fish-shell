@@ -13,23 +13,24 @@ function fish_prompt --description 'Write out the prompt'
         
         set -q fish_prompt_detailed_reload_interval || set -xU fish_prompt_detailed_reload_interval 600
 
-        if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval") || test $fish_detailed_prompt_reset -eq 1
-            # set -U prompt_counter 0
+        # update prompt values
+        if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval") || test $fish_prompt_detailed_reset -eq 1
             set -U fish_prompt_detailed_last_check (date +%s)
             set_color -b magenta -i
-            echo -n " Reload NVM_CURRENT_VERSION, GOOGLE_CONFIG_NAME, GOOGLE_PROJECT, K8S_CLUSTER, K8S_CLUSTER_VERSION "
+            echo -n " Reload NVM_CURRENT_VERSION, GOOGLE_CONFIG, GOOGLE_PROJECT, K8S_CLUSTER, K8S_CLUSTER_VERSION "
             set_color normal
             echo
+            set -xU GOOGLE_CONFIG (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
             set -xU GOOGLE_PROJECT (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.core.project)')
-            set -xU GOOGLE_CONFIG_NAME (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
             set -xU K8S_CLUSTER (kubectl config current-context 2>&1)
-            if test $fish_detailed_prompt_reset -eq 0
-                chenv reset
-            end
+            # if test $fish_detailed_prompt_reset -eq 0
+            #     chenv reset
+            # end
             if test $K8S_CLUSTER != "error: current-context is not set"
                 set -xU K8S_CLUSTER_VERSION (kubectl version --short | awk '/Server/{print$3}')
             else
                 set -xU K8S_CLUSTER_VERSION "n/a"
+                set -xU K8S_CLUSTER_SHORT ''
             end
             if test (node -v)
                 if test (npm -v)
@@ -40,36 +41,9 @@ function fish_prompt --description 'Write out the prompt'
             else
                 set -xU NVM_CURRENT_VERSION 'undefined / undefined'
             end
-            set -U fish_detailed_prompt_reset 0
+            set -U fish_prompt_detailed_reset 0
+            iterm2_update_user_vars
         end
-
-        # check Google Config Name
-        if not test -n "$GOOGLE_CONFIG_NAME"
-            set -xU GOOGLE_CONFIG_NAME (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
-        end
-
-        # check GOOGLE PROJECT
-        if not test -n "$GOOGLE_PROJECT"
-            set -xU GOOGLE_PROJECT (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.core.project)')
-        end
-
-        if not test -n "$GOOGLE_REGION"
-            set -xU GOOGLE_REGION (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.compute.region)')
-        end
-        
-        if not test -n "$GOOGLE_ZONE"
-            set -xU GOOGLE_ZONE (gcloud config configurations list --filter 'is_active=true' --format 'value(properties.compute.zone)')
-        end
-
-        if not test -n "$K8S_CLUSTER"
-            set -xU K8S_CLUSTER (kubectl config current-context)
-        end
-
-        # set -l IFS "_"; echo -n "$K8S_CLUSTER" | read -la ARRAY
-        # if not contains $ARRAY[2] $GOOGLE_PROJECT; and [ $K8S_CLUSTER != "n/a" ]; 
-        #         set_color red
-        #         echo 'Google Project does NOT match kubernetes cluster !!!'
-        # end
 
         # node/npm version
         if test -n "$NVM_CURRENT_VERSION"
@@ -79,15 +53,15 @@ function fish_prompt --description 'Write out the prompt'
             echo 'nvm:' $NVM_CURRENT_VERSION
         end
 
-        # set Google Cloud environment
         if test "$TERM_PROGRAM" = "iTerm.app"
             iterm2_prompt_mark
         end
 
+        # set Google Cloud environment
         set_color brblue
         echo -n '⎔ '
         set_color yellow
-        echo 'conf:' $GOOGLE_CONFIG_NAME 'project:' $GOOGLE_PROJECT 'region:' $GOOGLE_REGION 'zone:' $GOOGLE_ZONE
+        echo 'conf:' $GOOGLE_CONFIG 'project:' $GOOGLE_PROJECT 'region:' $GOOGLE_REGION 'zone:' $GOOGLE_ZONE
         if test -n "$GOOGLE_APPLICATION_CREDENTIALS"
             echo '  GOOGLE_APPLICATION_CREDENTIALS='$GOOGLE_APPLICATION_CREDENTIALS
         end
@@ -104,8 +78,10 @@ function fish_prompt --description 'Write out the prompt'
     end
 
     # place iTerm prompt marker
-    if test "$TERM_PROGRAM" = "iTerm.app"
+    if test $TERM_PROGRAM = "iTerm.app"
         iterm2_prompt_mark
+        # update iTerm user variables
+        iterm2_update_user_vars
     end
 
     # User

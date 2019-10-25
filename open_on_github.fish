@@ -2,7 +2,7 @@ function open_on_github --description "Open repo on GitHub if remote available"
 
 	if test -e ./.git
 
-		set -l remote (git remote -v | grep fetch | awk '{print $2}' | sed 's/git@/https:\/\//' | sed 's/com:/com\//')
+		set -l remote (git remote -v | grep fetch | awk '{print $2}' | sed 's/git@/https:\/\//' | sed 's/com:/com\//' | sed 's/\.git//')
 
 		if string length -q $remote 
 			set -l branch (git branch -a | awk '/\*/{print$2}')
