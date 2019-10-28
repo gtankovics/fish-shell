@@ -42,7 +42,9 @@ function fish_prompt --description 'Write out the prompt'
                 set -xU NVM_CURRENT_VERSION 'undefined / undefined'
             end
             set -U fish_prompt_detailed_reset 0
-            iterm2_update_user_vars
+            if test "$TERM_PROGRAM" = "iTerm.app"
+                iterm2_update_user_vars
+            end
         end
 
         # node/npm version
