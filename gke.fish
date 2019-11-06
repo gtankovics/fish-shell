@@ -1,4 +1,4 @@
-function gcp --description "Open GKE page on GCP web interface"
+function gke --description "Open GKE page on GCP web interface"
 
 	if test -n "$GOOGLE_PROJECT"
 
