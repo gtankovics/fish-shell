@@ -3,7 +3,7 @@ function fish_prompt --description 'Write out the prompt'
 
     # detailed prompt
 
-    if test -n "$fish_prompt_detailed" && test "$TERM_PROGRAM" != "vscode"
+    if test -n "$fish_prompt_detailed" && test "$TERM_PROGRAM" != "vscode" && test -n "SSH_TTY"
 
         if not test -n "$fish_prompt_detailed_last_check"
             set -U fish_prompt_detailed_last_check (date +%s)
