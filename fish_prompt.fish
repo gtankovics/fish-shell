@@ -53,14 +53,15 @@ function fish_prompt --description 'Write out the prompt'
             echo -n '⬢ nvm: '
             set_color -i brgreen
             echo $NVM_CURRENT_VERSION
+            set_color normal
         end
-
         # domain
         if test -n "$ACTIVE_DOMAIN"
             set_color yellow
             echo -n '🔸r53: '
             set_color -i bryellow
-            echo "$ACTIVE_DOMAIN"
+            echo $ACTIVE_DOMAIN
+            set_color normal
         end
 
         if test "$TERM_PROGRAM" = "iTerm.app"
@@ -72,21 +73,30 @@ function fish_prompt --description 'Write out the prompt'
         echo -n '⏣ '
         set_color yellow ; echo -n "conf: " 
         set_color -i bryellow ; echo -n $GOOGLE_CONFIG 
+        set_color normal
         set_color yellow ; echo -n ' project: ' 
         set_color -i bryellow ; echo -n $GOOGLE_PROJECT 
+        set_color normal
         set_color yellow ; echo -n ' region: ' 
         set_color -i bryellow ; echo -n $GOOGLE_REGION 
+        set_color normal
         set_color yellow ; echo -n ' zone: '
         set_color -i bryellow ; echo $GOOGLE_ZONE
+        set_color normal
         if test -n "$GOOGLE_APPLICATION_CREDENTIALS"
-            echo '  GOOGLE_APPLICATION_CREDENTIALS='$GOOGLE_APPLICATION_CREDENTIALS
+            set_color -o yellow
+            echo -n '  GOOGLE_APPLICATION_CREDENTIALS='
+            set_color normal
+            set_color -i bryellow ; echo $GOOGLE_APPLICATION_CREDENTIALS
+            set_color normal
         end
         set_color brblue
         echo -n '⎈ '
         if test "$K8S_CLUSTER" != "error: current-context is not set"
             set_color yellow ; echo -n 'k8s: '   
             set_color -i bryellow ; echo -n $K8S_CLUSTER
-            set_color yellow ; echo -n ' v: '
+            set_color normal
+            set_color yellow ; echo -n ' version: '
             set_color bryellow ; echo -n $K8S_CLUSTER_VERSION
         end
         set_color normal
