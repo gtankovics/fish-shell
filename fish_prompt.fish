@@ -42,15 +42,25 @@ function fish_prompt --description 'Write out the prompt'
                 set -xU NVM_CURRENT_VERSION 'undefined / undefined'
             end
             set -U fish_prompt_detailed_reset 0
-            iterm2_update_user_vars
+            if test "$TERM_PROGRAM" = "iTerm.app"
+                iterm2_update_user_vars
+            end
         end
 
         # node/npm version
         if test -n "$NVM_CURRENT_VERSION"
-            set_color brgreen
-            echo -n '⎔ '
+            set_color green
+            echo -n '⬢ nvm: '
+            set_color -i brgreen
+            echo $NVM_CURRENT_VERSION
+        end
+
+        # domain
+        if test -n "$ACTIVE_DOMAIN"
             set_color yellow
-            echo 'nvm:' $NVM_CURRENT_VERSION
+            echo -n '🔸r53: '
+            set_color -i bryellow
+            echo "$ACTIVE_DOMAIN"
         end
 
         if test "$TERM_PROGRAM" = "iTerm.app"
@@ -59,19 +69,25 @@ function fish_prompt --description 'Write out the prompt'
 
         # set Google Cloud environment
         set_color brblue
-        echo -n '⎔ '
-        set_color yellow
-        echo 'conf:' $GOOGLE_CONFIG 'project:' $GOOGLE_PROJECT 'region:' $GOOGLE_REGION 'zone:' $GOOGLE_ZONE
+        echo -n '⏣ '
+        set_color yellow ; echo -n "conf: " 
+        set_color -i bryellow ; echo -n $GOOGLE_CONFIG 
+        set_color yellow ; echo -n ' project: ' 
+        set_color -i bryellow ; echo -n $GOOGLE_PROJECT 
+        set_color yellow ; echo -n ' region: ' 
+        set_color -i bryellow ; echo -n $GOOGLE_REGION 
+        set_color yellow ; echo -n ' zone: '
+        set_color -i bryellow ; echo $GOOGLE_ZONE
         if test -n "$GOOGLE_APPLICATION_CREDENTIALS"
             echo '  GOOGLE_APPLICATION_CREDENTIALS='$GOOGLE_APPLICATION_CREDENTIALS
         end
         set_color brblue
         echo -n '⎈ '
-        set_color yellow
         if test "$K8S_CLUSTER" != "error: current-context is not set"
-            echo -n $K8S_CLUSTER
-            set_color -i bryellow
-            echo -n " "$K8S_CLUSTER_VERSION
+            set_color yellow ; echo -n 'k8s: '   
+            set_color -i bryellow ; echo -n $K8S_CLUSTER
+            set_color yellow ; echo -n ' v: '
+            set_color bryellow ; echo -n $K8S_CLUSTER_VERSION
         end
         set_color normal
         echo
