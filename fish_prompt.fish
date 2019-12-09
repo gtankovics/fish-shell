@@ -17,7 +17,7 @@ function fish_prompt --description 'Write out the prompt'
         if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval") || test $fish_prompt_detailed_reset -eq 1
             set -U fish_prompt_detailed_last_check (date +%s)
             set_color -b magenta -i
-            echo -n " Reload NVM_CURRENT_VERSION, GOOGLE_CONFIG, GOOGLE_PROJECT, K8S_CLUSTER, K8S_CLUSTER_VERSION "
+            echo -n " Reload NVM, R53, GCP and K8S configs  "
             set_color normal
             echo
             set -xU GOOGLE_CONFIG (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
@@ -32,15 +32,7 @@ function fish_prompt --description 'Write out the prompt'
                 set -xU K8S_CLUSTER_VERSION "n/a"
                 set -xU K8S_CLUSTER_SHORT ''
             end
-            if test (node -v)
-                if test (npm -v)
-                    set -xU NVM_CURRENT_VERSION (node -v)'/'(npm -v)
-                else
-                    set -xU NVM_CURRENT_VERSION (node-v)'/ undefined'
-                end
-            else
-                set -xU NVM_CURRENT_VERSION 'undefined / undefined'
-            end
+
             set -U fish_prompt_detailed_reset 0
             if test "$TERM_PROGRAM" = "iTerm.app"
                 iterm2_update_user_vars
@@ -48,6 +40,22 @@ function fish_prompt --description 'Write out the prompt'
         end
 
         # node/npm version
+        if test -z "$NVM_BIN"
+            if test (which nvm) || test (functions --details nvm)
+                nvm use default
+                set -xU NVM_CURRENT_VERSION (node -v)'/'(npm -v)
+            else
+                echo "'nvm' is not installed."
+                if not test (which node)
+                    echo "'node' is not installed."
+                else 
+                    set -xU NVM_CURRENT_VERSION (node -v)'/'(npm -v)
+                end
+            end
+        else
+            set -xU NVM_CURRENT_VERSION (node -v)'/'(npm -v)
+        end
+
         if test -n "$NVM_CURRENT_VERSION"
             set_color green
             echo -n '⬢ nvm: '
@@ -55,18 +63,19 @@ function fish_prompt --description 'Write out the prompt'
             echo $NVM_CURRENT_VERSION
             set_color normal
         end
+
         # domain
         if test -n "$ACTIVE_DOMAIN"
             set_color yellow
-            echo -n '🔸r53: '
+            echo -n '▪︎ r53: '
             set_color -i bryellow
             echo $ACTIVE_DOMAIN
             set_color normal
         end
 
-        if test "$TERM_PROGRAM" = "iTerm.app"
-            iterm2_prompt_mark
-        end
+        # if test "$TERM_PROGRAM" = "iTerm.app"
+        #     iterm2_prompt_mark
+        # end
 
         # set Google Cloud environment
         set_color brblue
@@ -97,7 +106,7 @@ function fish_prompt --description 'Write out the prompt'
             set_color -i bryellow ; echo -n $K8S_CLUSTER
             set_color normal
             set_color yellow ; echo -n ' version: '
-            set_color bryellow ; echo -n $K8S_CLUSTER_VERSION
+            set_color -i bryellow ; echo -n $K8S_CLUSTER_VERSION
         end
         set_color normal
         echo
