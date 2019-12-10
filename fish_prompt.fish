@@ -142,6 +142,10 @@ function fish_prompt --description 'Write out the prompt'
     __fish_hg_prompt
     echo
 
+    if test -n "$fish_prompt_detailed_show_datetime"
+        echo -n (date +%Y-%m-%d\ %H:%M:%S\ ) 
+    end
+
     if not test $last_status -eq 0
         set_color $fish_color_error
     end
