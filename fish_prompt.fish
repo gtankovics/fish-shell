@@ -105,6 +105,9 @@ function fish_prompt --description 'Write out the prompt'
             set_color yellow ; echo -n 'k8s: '   
             set_color -i bryellow ; echo -n $K8S_CLUSTER
             set_color normal
+            set_color yellow ; echo -n ' short: '   
+            set_color -i bryellow ; echo -n $K8S_CLUSTER_SHORT
+            set_color normal
             set_color yellow ; echo -n ' version: '
             set_color -i bryellow ; echo -n $K8S_CLUSTER_VERSION
         end
