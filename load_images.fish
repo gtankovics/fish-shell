@@ -9,16 +9,22 @@ function load_images --description 'Load docker images from folder'
     echo "Loading twmodel..."
     docker load -i mspackage.tar
 
-    if test -n "$argv" && test "$argv" = "--push" 
+    if test -n "$argv" && test "$argv[1]" = "--push" 
 
-        echo "tag and push $argv"
+        set registry "gcr.io/bc-saas-images/"
+
+        if test -n "$argv[2]"
+            set registry $argv[2]
+        end
+
+        echo "tag and push to $argv[2]"
         # # Tag twportal image and push
-        docker tag twportal:$PRODUCT_VERSION gcr.io/bc-saas-images/twportal:$PRODUCT_VERSION 
-        docker push gcr.io/bc-saas-images/twportal:$PRODUCT_VERSION 
+        docker tag twportal:$PRODUCT_VERSION $registry/twportal:$PRODUCT_VERSION 
+        docker push $registry/twportal:$PRODUCT_VERSION 
 
         # # Tag twmodel image and push
-        docker tag twmodel:$PRODUCT_VERSION gcr.io/bc-saas-images/twmodel:$PRODUCT_VERSION
-        docker push gcr.io/bc-saas-images/twmodel:$PRODUCT_VERSION 
+        docker tag twmodel:$PRODUCT_VERSION $registry/twmodel:$PRODUCT_VERSION
+        docker push $registry/twmodel:$PRODUCT_VERSION 
     else
         echo "Invalid argument(s): $argv"
     end
