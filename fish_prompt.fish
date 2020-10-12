@@ -17,7 +17,7 @@ function fish_prompt --description 'Write out the prompt'
         if test (date +%s) -gt (math "$fish_prompt_detailed_last_check + $fish_prompt_detailed_reload_interval") || test $fish_prompt_detailed_reset -eq 1
             set -U fish_prompt_detailed_last_check (date +%s)
             set_color -b magenta -i
-            echo -n " Reload NVM, R53, GCP and K8S configs  "
+            echo -n " Reload NVM, R53, GCP and K8S configs "
             set_color normal
             echo
             set -xU GOOGLE_CONFIG (gcloud config configurations list --filter 'is_active=true' --format 'value(name)')
@@ -43,7 +43,7 @@ function fish_prompt --description 'Write out the prompt'
         if test -z "$NVM_BIN"
             if test (which nvm) || test (functions --details nvm)
                 nvm use default
-                set -xU NVM_CURRENT_VERSION (node -v)'/'(npm -v)
+                set -xU NVM_CURRENT_VERSION ($NVM_BIN/node -v)'/'($NVM_BIN/npm -v)
             else
                 echo "'nvm' is not installed."
                 if not test (which node)
@@ -104,6 +104,9 @@ function fish_prompt --description 'Write out the prompt'
         if test "$K8S_CLUSTER" != "error: current-context is not set"
             set_color yellow ; echo -n 'k8s: '   
             set_color -i bryellow ; echo -n $K8S_CLUSTER
+            set_color normal
+            set_color yellow ; echo -n ' short: '   
+            set_color -i bryellow ; echo -n $K8S_CLUSTER_SHORT
             set_color normal
             set_color yellow ; echo -n ' version: '
             set_color -i bryellow ; echo -n $K8S_CLUSTER_VERSION
