@@ -65,11 +65,11 @@ function fish_prompt --description 'Write out the prompt'
         end
 
         # domain
-        if test -n "$ACTIVE_DOMAIN"
+        if test -n "$ACTIVE_DOMAIN_SUFFIX"
             set_color yellow
             echo -n '▪︎ r53: '
             set_color -i bryellow
-            echo $ACTIVE_DOMAIN
+            echo $ACTIVE_DOMAIN_SUFFIX
             set_color normal
         end
 
