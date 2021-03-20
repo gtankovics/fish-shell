@@ -1,4 +1,4 @@
-function cleandocker --description 'Clean local Docker registry'
+function cleandocker --description 'Clean Docker. Stop/remove ALL containers and remove ALL images.'
 	set -l running_containers (docker ps -a | awk '/Up/{print$1}') 
 	if test "$running_containers"
 		echo 'Stop running containers'
