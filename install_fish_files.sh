@@ -7,13 +7,24 @@ if not test -d $fishBin
 	mkdir ~/bin/fish
 end
 
-cp *.fish $fishBin
-
 for file in (ls *.fish)
 	if not test -L "$fishFunctionsDir/$file"
+		cp $file $fishBin/$file
 		ln -s $fishBin/$file $fishFunctionsDir/$file
+		echo "$file copied and linked."
 	else
-		rm $fishFunctionsDir/$file
-		ln -s $fishBin/$file $fishFunctionsDir/$file
+		if not diff -y -q $file $fishFunctionsDir/$file
+			if yesno "Show the differencies?"
+				diff $file $fishFunctionsDir/$file
+			end
+			if yesno "Do you want to create $file?"
+				cp $file $fishBin/$file
+				rm $fishFunctionsDir/$file
+				ln -s $fishBin/$file $fishFunctionsDir/$file
+				echo "$file replaced and relinked."
+			else
+				echo "$file skipped."
+			end
+		end
 	end
 end
