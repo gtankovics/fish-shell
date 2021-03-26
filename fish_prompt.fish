@@ -115,11 +115,13 @@ function fish_prompt --description 'Write out the prompt'
         echo
     end
 
-    # place iTerm prompt marker
-    if test $TERM_PROGRAM = "iTerm.app"
-        iterm2_prompt_mark
-        # update iTerm user variables
-        iterm2_update_user_vars
+    # place iTerm prompt marker in case TMUX is not active
+    if test -z "$TMUX"
+        if test $TERM_PROGRAM = "iTerm.app"
+            iterm2_prompt_mark
+            # update iTerm user variables
+            iterm2_update_user_vars
+        end
     end
 
     # User
