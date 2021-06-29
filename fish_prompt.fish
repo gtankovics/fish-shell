@@ -100,19 +100,33 @@ function fish_prompt --description 'Write out the prompt'
             set_color normal
         end
         set_color brblue
+
+        # set Kubernetes environment
         echo -n '⎈ '
-        if test "$K8S_CLUSTER" != "error: current-context is not set"
-            set_color yellow ; echo -n 'k8s: '   
-            set_color -i bryellow ; echo -n $K8S_CLUSTER
-            set_color normal
-            set_color yellow ; echo -n ' short: '   
-            set_color -i bryellow ; echo -n $K8S_CLUSTER_SHORT
-            set_color normal
-            set_color yellow ; echo -n ' version: '
-            set_color -i bryellow ; echo -n $K8S_CLUSTER_VERSION
+        set_color yellow ; echo -n 'k8s: '
+        set_color -i bryellow
+        if not string match -q "error: current-context is not set" $K8S_CLUSTER
+            echo -n $K8S_CLUSTER
+        else
+            echo -n "n/a"
         end
         set_color normal
-        echo
+        set_color yellow ; echo -n ' short: '
+        set_color -i bryellow
+        if test -n "$K8S_CLUSTER_SHORT"
+            echo -n $K8S_CLUSTER_SHORT
+        else
+            echo -n "n/a"
+        end
+        set_color normal
+        set_color yellow ; echo -n ' version: '
+        set_color -i bryellow
+        if test -n "$K8S_CLUSTER_VERSION"
+            echo $K8S_CLUSTER_VERSION
+        else
+            echo -n "n/a"
+        end
+        set_color normal
     end
 
     # place iTerm prompt marker in case TMUX is not active
