@@ -105,7 +105,7 @@ function fish_prompt --description 'Write out the prompt'
         echo -n '⎈ '
         set_color yellow ; echo -n 'k8s: '
         set_color -i bryellow
-        if not string match -q "error: current-context is not set" $K8S_CLUSTER
+        if not string match -q "error: current-context is not set" $K8S_CLUSTER; and test (string length "$K8S_CLUSTER") -ne 0
             echo -n $K8S_CLUSTER
         else
             echo -n "n/a"
