@@ -58,7 +58,7 @@ function fish_prompt --description 'Write out the prompt'
 
         if test -n "$NVM_CURRENT_VERSION"
             set_color green
-            echo -n '⬢ nvm: '
+            echo -n '🅽 nvm: '
             set_color -i brgreen
             echo $NVM_CURRENT_VERSION
             set_color normal
@@ -67,7 +67,7 @@ function fish_prompt --description 'Write out the prompt'
         # domain
         if test -n "$ACTIVE_DOMAIN_SUFFIX"
             set_color yellow
-            echo -n '▪︎ r53: '
+            echo -n '🅰 r53: '
             set_color -i bryellow
             echo $ACTIVE_DOMAIN_SUFFIX
             set_color normal
@@ -79,7 +79,7 @@ function fish_prompt --description 'Write out the prompt'
 
         # set Google Cloud environment
         set_color brblue
-        echo -n '⏣ '
+        echo -n '🅶 '
         set_color yellow ; echo -n "conf: " 
         set_color -i bryellow ; echo -n $GOOGLE_CONFIG 
         set_color normal
@@ -102,7 +102,7 @@ function fish_prompt --description 'Write out the prompt'
         set_color brblue
 
         # set Kubernetes environment
-        echo -n '⎈ '
+        echo -n '🅺 '
         set_color yellow ; echo -n 'k8s: '
         set_color -i bryellow
         if not string match -q "error: current-context is not set" $K8S_CLUSTER; and test (string length "$K8S_CLUSTER") -ne 0
