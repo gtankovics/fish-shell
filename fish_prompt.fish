@@ -124,7 +124,7 @@ function fish_prompt --description 'Write out the prompt'
         if test -n "$K8S_CLUSTER_VERSION"
             echo $K8S_CLUSTER_VERSION
         else
-            echo -n "n/a"
+            echo "n/a"
         end
         set_color normal
     end
