@@ -34,8 +34,10 @@ function fish_prompt --description 'Write out the prompt'
             end
 
             set -U fish_prompt_detailed_reset 0
-            if test "$TERM_PROGRAM" = "iTerm.app"
-                iterm2_update_user_vars
+            if test -n "$TERM_PROGRAM"
+                if test "$TERM_PROGRAM" = "iTerm.app"
+                    iterm2_update_user_vars
+                end
             end
         end
 
