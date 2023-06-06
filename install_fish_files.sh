@@ -13,7 +13,7 @@ for file in (ls *.fish)
 		ln -s $fishBin/$file $fishFunctionsDir/$file
 		echo "$file copied and linked."
 	else
-		if not diff -y -q $file $fishFunctionsDir/$file
+		if not diff -q $file $fishFunctionsDir/$file
 			if yesno "Show the differencies?"
 				diff $file $fishFunctionsDir/$file
 			end
