@@ -11,13 +11,19 @@ function terraform --description "Check local terraform.sh or run the general on
 			echo " Running terraform from local 'terraform.sh' is not possible because it's not executeable. "
 		end
 	else
-		if find . -name "*.tf" -d 1 -type f > /dev/null
+		if test (find . -name "*.tf" -d 1 -type f | wc -l) -gt 0
 			set -l terraform_path (which terraform)
 			echo " There's no 'terraform.sh' found. But found '*.tf' files. Run terraform from $terraform_path "
 			set_color normal
 			$terraform_path $argv
 		else
 			echo " This folder is not related to 'terraform'. "
+		end
+		if test (find . -name "terragrunt.hcl" -d 1 -type f | wc -l) -gt 0
+			echo "This folder has 'terragrunt' related files. Execute 'terragrunt'."
+			set -l terragrunt_path (which terragrunt)
+			set_color normal
+			$terragrunt_path $argv
 		end
 	end
 	set_color normal
