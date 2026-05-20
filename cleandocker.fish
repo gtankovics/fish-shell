@@ -13,10 +13,10 @@ function cleandocker --description 'Clean Docker. Stop/remove ALL containers and
 	else  
 		echo 'No containers.'
 	end
-	set -l container_images (docker images | awk '/[a-z0-9]{12}/{print$3}')
+	set -l container_images (docker images --format json | jq -r '.ID')
 	if test "$container_images"
 		echo 'Delete container images'
-		docker rmi (docker images | awk '/[a-z0-9]{12}/{print$3}') --force
+		docker rmi (docker images --format json | jq -r '.ID') --force
 	else
 		echo "No container images."
 	end
